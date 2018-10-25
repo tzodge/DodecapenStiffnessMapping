@@ -39,13 +39,13 @@ def create_A_mat (dt):
 def KF(mu_tm1, cov_tm1, z_t):
     z_t = z_t.reshape(6,1)
     A_t = create_A_mat(dt)
-    mu_t_bar = A_t.dot(mu_tm1) + np.random.random((12,1))/100
+    mu_t_bar = A_t.dot(mu_tm1) 
     # print mu_t_bar, "mu_t_bar"
     cov_t_bar = A_t.dot(cov_tm1).dot(A_t.T)
     # print cov_t_bar,"cov_t_bar"
     K_t = cov_t_bar.dot(C_t.T).dot(np.linalg.inv(C_t.dot(cov_t_bar).dot(C_t.T) + Q))
     # print (cov_t_bar).dot(C_t.T), "(cov_t_bar).dot(C_t.T)"
-    print K_t
+    # print K_t
     mu_t = mu_t_bar + K_t.dot(z_t - C_t.dot(mu_t_bar))
     cov_t = (np.eye(np.shape(cov_tm1)[0]) - K_t.dot(C_t)).dot(cov_t_bar)
     
@@ -64,7 +64,7 @@ hist_plot_switch = 0
 kalman_filter_switch = 1
 
 
-iterations_for_while = 100
+iterations_for_while = 500
 marker_size_in_mm = 19.16
 tip_coord  = np.array([ 2.89509534, -111.83311787  , -2.33105497,1]) 
 
@@ -129,8 +129,8 @@ while(j<iterations_for_while):
         tip_posit[j,:] = tip_loc_cam_frame[0:3].T 
         rvecs_euler = np.array(tf3d.euler.axangle2euler(rvecs[0,0],np.linalg.norm(rvecs)))
         
-        pose_marker[j,:] = np.append(tvecs,rvecs_euler*180/np.pi)
-
+        pose_marker[j,:] = np.append(tvecs,rvecs)
+        print pose_marker[j,:].shape, "pose_marker[j,:]"
         color[j] = j 
         time_vect[j] = time.time() - t0
         rot,_ = cv2.Rodrigues(rvecs)
